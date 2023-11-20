@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { UserDto } from 'src/users/interfaces/user.interface';
 
@@ -20,7 +20,7 @@ export class UsersService {
             return true;
         }
         catch (error) {
-            throw new Error(error);
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -39,7 +39,7 @@ export class UsersService {
             return true;
         }
         catch (error) {
-            throw new Error(error);
+            throw new HttpException(error, HttpStatus.NOT_FOUND);
         }
     }
 }
