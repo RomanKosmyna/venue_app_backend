@@ -1,19 +1,25 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma.service';
 import { UserDto } from 'src/users/interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
-    constructor(private prismaService: PrismaService) { }
+    constructor(
+        private prismaService: PrismaService,
+        private authService: AuthService
+    ) { }
 
     async createUser(userData: UserDto): Promise<boolean> {
         try {
             await this.findUser(userData.email);
 
+            const hashedPassword = await this.authService.hashPassword(userData.password);
+
             await this.prismaService.user.create({
                 data: {
                     email: userData.email,
-                    password: userData.password
+                    password: hashedPassword
                 }
             });
 

@@ -7,9 +7,9 @@ export class AuthController {
     constructor(private usersService: UsersService) { }
 
     @Post("signup")
-    async signUp(@Body() userData: UserDto): Promise<boolean> {
+    async signUp(@Body() userData: UserDto) {
         await this.usersService.createUser(userData);
 
-        return true;
+        return {message: "User successfully created."};
     }
 }
