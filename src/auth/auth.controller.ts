@@ -1,15 +1,42 @@
-import { Body, Controller, HttpException, HttpStatus, NotFoundException, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { UserDto } from 'src/users/interfaces';
 import { UsersService } from 'src/users/users.service';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private usersService: UsersService) { }
+    constructor(
+        private usersService: UsersService,
+        private authService: AuthService
+    ) { }
+
+    @Post("signin")
+    async signIn(@Body() userData: UserDto) {
+        const findUser = await this.usersService.findUser(userData.email);
+
+        if (findUser === null) {
+            throw new HttpException("Email or password is incorrect.", HttpStatus.BAD_REQUEST);
+        }
+
+        const comparePasswords = await this.authService.comparePassword(userData.password, findUser.password);
+
+        if (!comparePasswords) {
+            throw new HttpException("Email or password is incorrect.", HttpStatus.BAD_REQUEST);
+        }
+
+        return { message: "Successful login.", data: findUser }
+    }
 
     @Post("signup")
     async signUp(@Body() userData: UserDto) {
+        const findUser = await this.usersService.findUser(userData.email);
+
+        if (findUser !== null) {
+            throw new HttpException("User already exists.", HttpStatus.BAD_REQUEST);
+        }
+
         await this.usersService.createUser(userData);
 
-        return {message: "User successfully created."};
+        return { message: "User successfully created." };
     }
 }

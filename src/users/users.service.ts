@@ -12,17 +12,15 @@ export class UsersService {
 
     async createUser(userData: UserDto): Promise<boolean> {
         try {
-            await this.findUser(userData.email);
-
             const hashedPassword = await this.authService.hashPassword(userData.password);
-
+            
             await this.prismaService.user.create({
                 data: {
                     email: userData.email,
                     password: hashedPassword
                 }
             });
-
+            
             return true;
         }
         catch (error) {
@@ -38,14 +36,10 @@ export class UsersService {
                 }
             });
 
-            if (user !== null) {
-                throw new NotFoundException("User already exists.");
-            }
-
-            return true;
+            return user;
         }
         catch (error) {
-            throw new HttpException(error, HttpStatus.NOT_FOUND);
+            throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
