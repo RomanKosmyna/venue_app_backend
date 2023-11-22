@@ -24,7 +24,9 @@ export class AuthController {
             throw new HttpException("Email or password is incorrect.", HttpStatus.BAD_REQUEST);
         }
 
-        return { message: "Successful login.", data: findUser }
+        const token = await this.authService.generateJwtToken(findUser.id, findUser.email);
+
+        return { message: "Successful login.", access_token: token }
     }
 
     @Post("signup")

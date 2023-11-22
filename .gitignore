@@ -11,7 +11,11 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+#env
 /.env
+
+#constants
+src/auth/constants/constants.ts
 
 # OS
 .DS_Store
