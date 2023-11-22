@@ -1,7 +1,8 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards, Request } from '@nestjs/common';
 import { UserDto } from 'src/users/interfaces';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -41,4 +42,10 @@ export class AuthController {
 
         return { message: "User successfully created." };
     }
+
+    // @UseGuards(AuthGuard)
+    // @Get('profile')
+    // getProfile(@Request() req) {
+    //     return req.user;
+    // }
 }
